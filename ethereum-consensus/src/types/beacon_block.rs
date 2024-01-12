@@ -10,6 +10,34 @@ use crate::{
     types::beacon_block_body::{BeaconBlockBodyRef, BeaconBlockBodyRefMut},
     Fork as Version,
 };
+
+use sha2::{Digest, Sha256};
+
+fn log2(x: usize) -> u32 {
+    if x == 0 {
+        0
+    } else if x.is_power_of_two() {
+        1usize.leading_zeros() - x.leading_zeros()
+    } else {
+        0usize.leading_zeros() - x.leading_zeros()
+    }
+}
+
+fn get_power_of_two_ceil(x: usize) -> usize {
+    match x {
+        x if x <= 1 => 1,
+        2 => 2,
+        x => 2 * get_power_of_two_ceil((x + 1) / 2),
+    }
+}
+
+pub fn sha256<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(bytes.as_ref());
+    let output = hasher.finalize();
+    output.into()
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, SimpleSerialize, serde::Serialize)]
 #[ssz(transparent)]
 #[serde(untagged)]
@@ -484,19 +512,19 @@ impl<
     {
         let value = serde_json::Value::deserialize(deserializer)?;
         if let Ok(inner) = <_ as serde::Deserialize>::deserialize(&value) {
-            return Ok(Self::Deneb(inner))
+            return Ok(Self::Deneb(inner));
         }
         if let Ok(inner) = <_ as serde::Deserialize>::deserialize(&value) {
-            return Ok(Self::Capella(inner))
+            return Ok(Self::Capella(inner));
         }
         if let Ok(inner) = <_ as serde::Deserialize>::deserialize(&value) {
-            return Ok(Self::Bellatrix(inner))
+            return Ok(Self::Bellatrix(inner));
         }
         if let Ok(inner) = <_ as serde::Deserialize>::deserialize(&value) {
-            return Ok(Self::Altair(inner))
+            return Ok(Self::Altair(inner));
         }
         if let Ok(inner) = <_ as serde::Deserialize>::deserialize(&value) {
-            return Ok(Self::Phase0(inner))
+            return Ok(Self::Phase0(inner));
         }
         Err(serde::de::Error::custom("no variant could be deserialized from input"))
     }

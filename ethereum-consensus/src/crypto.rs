@@ -24,6 +24,31 @@ const BLS_PUBLIC_KEY_BYTES_LEN: usize = 48;
 const BLS_SECRET_KEY_BYTES_LEN: usize = 32;
 const BLS_SIGNATURE_BYTES_LEN: usize = 96;
 
+fn log2(x: usize) -> u32 {
+    if x == 0 {
+        0
+    } else if x.is_power_of_two() {
+        1usize.leading_zeros() - x.leading_zeros()
+    } else {
+        0usize.leading_zeros() - x.leading_zeros()
+    }
+}
+
+fn get_power_of_two_ceil(x: usize) -> usize {
+    match x {
+        x if x <= 1 => 1,
+        2 => 2,
+        x => 2 * get_power_of_two_ceil((x + 1) / 2),
+    }
+}
+
+pub fn sha256<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(bytes.as_ref());
+    let output = hasher.finalize();
+    output.into()
+}
+
 #[derive(Debug, Error)]
 pub enum Error {
     #[cfg(feature = "serde")]
@@ -78,7 +103,7 @@ pub fn verify_signature(
 
 pub fn aggregate(signatures: &[Signature]) -> Result<Signature, Error> {
     if signatures.is_empty() {
-        return Err(Error::EmptyAggregate)
+        return Err(Error::EmptyAggregate);
     }
 
     let signatures = signatures
@@ -134,7 +159,7 @@ pub fn fast_aggregate_verify(
 // Return the aggregate public key for the public keys in `pks`
 pub fn eth_aggregate_public_keys(public_keys: &[PublicKey]) -> Result<PublicKey, Error> {
     if public_keys.is_empty() {
-        return Err(Error::EmptyAggregate)
+        return Err(Error::EmptyAggregate);
     }
     let public_keys = public_keys
         .iter()
