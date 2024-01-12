@@ -2,7 +2,7 @@
 use crate::serde::try_bytes_from_hex_str;
 use crate::{primitives::Bytes32, ssz::prelude::*};
 use blst::{min_pk as bls_impl, BLST_ERROR};
-use sha2::{Digest, Sha256};
+use sha2::{digest::KeyInit, Digest, Sha256};
 use std::{
     fmt,
     ops::{Deref, DerefMut},
