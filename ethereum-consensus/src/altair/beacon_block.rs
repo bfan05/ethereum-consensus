@@ -7,6 +7,7 @@ use crate::{
     ssz::prelude::*,
 };
 
+use serde_json::{Map, Value};
 use sha2::{digest::KeyInit, Digest, Sha256};
 
 fn log2(x: usize) -> u32 {

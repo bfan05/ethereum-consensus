@@ -2,6 +2,7 @@
 use crate::serde::try_bytes_from_hex_str;
 use crate::{primitives::Bytes32, ssz::prelude::*};
 use blst::{min_pk as bls_impl, BLST_ERROR};
+use serde_json::{Map, Value};
 use sha2::{digest::KeyInit, Digest, Sha256};
 use std::{
     fmt,

@@ -10,6 +10,7 @@ use crate::{
     types::beacon_block_body::{BeaconBlockBodyRef, BeaconBlockBodyRefMut},
     Fork as Version,
 };
+use serde_json::{Map, Value};
 
 use sha2::{Digest, Sha256};
 

@@ -7,6 +7,8 @@ use crate::{
     ssz::prelude::*,
 };
 
+use serde_json::{Map, Value};
+
 pub const FINALIZED_ROOT_INDEX: usize = 105;
 pub const FINALIZED_ROOT_INDEX_FLOOR_LOG_2: usize = 6;
 

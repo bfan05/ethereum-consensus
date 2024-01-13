@@ -8,6 +8,7 @@ use crate::{
     types::blinded_beacon_block::{BlindedBeaconBlockRef, BlindedBeaconBlockRefMut},
     Fork as Version,
 };
+use serde_json::{Map, Value};
 
 use sha2::{Digest, Sha256};
 
