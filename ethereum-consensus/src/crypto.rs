@@ -2,8 +2,7 @@
 use crate::serde::try_bytes_from_hex_str;
 use crate::{primitives::Bytes32, ssz::prelude::*};
 use blst::{min_pk as bls_impl, BLST_ERROR};
-use serde_json::{Map, Value};
-use sha2::{digest::KeyInit, Digest, Sha256};
+use sha2::{Digest, Sha256};
 use std::{
     fmt,
     ops::{Deref, DerefMut},
@@ -24,31 +23,6 @@ const BLS_DST: &[u8] = b"BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_POP_";
 const BLS_PUBLIC_KEY_BYTES_LEN: usize = 48;
 const BLS_SECRET_KEY_BYTES_LEN: usize = 32;
 const BLS_SIGNATURE_BYTES_LEN: usize = 96;
-
-fn log2(x: usize) -> u32 {
-    if x == 0 {
-        0
-    } else if x.is_power_of_two() {
-        1usize.leading_zeros() - x.leading_zeros()
-    } else {
-        0usize.leading_zeros() - x.leading_zeros()
-    }
-}
-
-fn get_power_of_two_ceil(x: usize) -> usize {
-    match x {
-        x if x <= 1 => 1,
-        2 => 2,
-        x => 2 * get_power_of_two_ceil((x + 1) / 2),
-    }
-}
-
-pub fn sha256<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
-    let mut hasher = Sha256::new();
-    hasher.update(bytes.as_ref());
-    let output = hasher.finalize();
-    output.into()
-}
 
 #[derive(Debug, Error)]
 pub enum Error {
